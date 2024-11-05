@@ -28,7 +28,7 @@ spec:
     spec: 
       containers: 
         - name: nginx-container 
-          image: nginx:latest
+          image: nginx:1.14.2
           resources: 
             requests: 
               memory: 128Mi 
