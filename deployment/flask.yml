@@ -1,0 +1,57 @@
+apiVersion: v1 
+kind: Service 
+metadata: 
+  name: flask 
+spec: 
+  selector: 
+    app: flask 
+  ports: 
+    - protocol: TCP 
+      port: 5000 
+      targetPort: 5000 
+---
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: flask-deployment 
+spec: 
+  replicas: 5 
+  selector: 
+    matchLabels: 
+      app: flask 
+  template: 
+    metadata: 
+      labels: 
+        app: flask 
+    spec: 
+      containers: 
+        - name: flask-container 
+          image: eleki/projet-flask-v0.1:101aeec59e4efca3423c64cb941d462f85636f80
+          resources: 
+            requests: 
+              memory: 128Mi 
+              cpu: 100m 
+            limits: 
+              memory: 256Mi 
+              cpu: 200m 
+          ports: 
+            - containerPort: 5000 
+          env: 
+            - name: MONGO_HOST 
+              value: mongo-service 
+            - name: MONGO_PORT 
+              value: "27017" 
+            - name: MONGO_DB 
+              value: devops 
+            - name: MONGO_COLLECTION 
+              value: users 
+            - name: MONGO_USERNAME 
+              valueFrom: 
+                secretKeyRef: 
+                  name: mongo-credentials 
+                  key: username 
+            - name: MONGO_PASSWORD 
+              valueFrom: 
+                secretKeyRef: 
+                  name: mongo-credentials 
+                  key: password 
